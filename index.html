@@ -26,7 +26,6 @@
       </div>
     </div>
     <!-- Polyfills bundle. -->
-
 <script src="src/polyfills.bundle.js" charset="utf-8"> </script>    
 
 
@@ -38,6 +37,28 @@
 
 <script>
     System.import('./index.js').catch(function(err) { console.error(err); })
+</script>
+
+<script>
+  function fixCocosInputScale() {
+    // 透過 SystemJS 或全局標籤取得 Cocos view 模組
+    const cc = window.cc;
+    if (cc && cc.view) {
+      // 取得實際視窗大小並強制 View 重新對齊 DOM 邊界
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      cc.view.setFrameSize(width, height);
+    }
+  }
+
+  // 監聽視窗變化並延遲觸發
+  window.addEventListener('resize', () => {
+    setTimeout(fixCocosInputScale, 200);
+  });
+  
+  window.addEventListener('orientationchange', () => {
+    setTimeout(fixCocosInputScale, 200);
+  });
 </script>
   </body>
 </html>
