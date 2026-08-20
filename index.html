@@ -40,25 +40,28 @@
 </script>
 
 <script>
-  function fixCocosInputScale() {
-    // 透過 SystemJS 或全局標籤取得 Cocos view 模組
-    const cc = window.cc;
-    if (cc && cc.view) {
-      // 取得實際視窗大小並強制 View 重新對齊 DOM 邊界
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      cc.view.setFrameSize(width, height);
+    // 修正輸入偏移    
+    function fixCocosInputScale() {
+      const cc = window.cc;
+      if (cc && cc.view) {
+        // 使用 clientWidth / clientHeight 取得精準的視埠高寬（不含工具列）
+        const width = document.documentElement.clientWidth || window.innerWidth;
+        const height = document.documentElement.clientHeight || window.innerHeight;
+        
+        cc.view.setFrameSize(width, height);
+      }
     }
-  }
 
-  // 監聽視窗變化並延遲觸發
-  window.addEventListener('resize', () => {
-    setTimeout(fixCocosInputScale, 200);
-  });
-  
-  window.addEventListener('orientationchange', () => {
-    setTimeout(fixCocosInputScale, 200);
-  });
+    // 監聽 resize 與 orientationchange
+    window.addEventListener('resize', () => {
+      setTimeout(fixCocosInputScale, 200);
+    });
+    
+    window.addEventListener('orientationchange', () => {
+      // 手機轉向時，工具列收合需要時間，稍微拉長延遲或觸發兩次
+      setTimeout(fixCocosInputScale, 300);
+      setTimeout(fixCocosInputScale, 600);
+    });
 </script>
   </body>
 </html>
